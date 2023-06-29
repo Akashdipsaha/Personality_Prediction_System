@@ -5,7 +5,7 @@ The system is implemented in Python and leverages various libraries and techniqu
 
 
 ### Installation
-1. Clone the repository
+1. Clone the repository:
 
 2. Navigate to the project directory:
    ```
@@ -88,3 +88,41 @@ The system is implemented in Python and leverages various libraries and techniqu
 6. Vectorize the cleaned text:
    ```python
   
+
+ corpus = " ".join(df["cleaned"])
+   word_vectorizer = TfidfVectorizer(sublinear_tf=True, stop_words='english', max_features=1500)
+   word_vectorizer.fit(text)
+   WordFeatures = word_vectorizer.transform(text)
+   ```
+7. Split the data into train and test sets:
+   ```python
+   X_train, X_test, y_train, y_test = train_test_split(WordFeatures, target, random_state=24, test_size=0.2)
+   ```
+8. Train the model:
+   ```python
+   model = OneVsRestClassifier(KNeighborsClassifier())
+   model.fit(X_train, y_train)
+   ```
+9. Make predictions:
+   ```python
+   y_pred = model.predict(X_test)
+   ```
+10. Evaluate the model:
+    ```python
+    print(f'Training Accuracy: {(model.score(X_train, y_train) * 100).round(2)}%')
+    print(f'Validation Accuracy: {(model.score(X_test, y_test) * 100).round(2)}%')
+    print(metrics.classification_report(y_test, y_pred))
+    ```
+11. Generate word cloud:
+    ```python
+    from wordcloud import WordCloud
+    
+    # Create a word cloud from the lemmatized words
+    res = ' '.join([i for i in lem_words if not i.isdigit()])
+    plt.subplots(figsize=(16, 10))
+    wordcloud = WordCloud(background_color='black', max_words=100, width=1400, height=1200).generate(res)
+    plt.imshow(wordcloud)
+    plt.title('Resume Text WordCloud (100 Words)')
+    plt.axis('off')
+    plt.show()
+    ```
